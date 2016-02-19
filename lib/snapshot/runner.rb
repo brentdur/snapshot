@@ -110,8 +110,10 @@ module Snapshot
       FileUtils.rm_rf(screenshots_path) if Snapshot.config[:clean]
       FileUtils.mkdir_p(screenshots_path)
 
+      launch_arguments_path = "/tmp/snapshot-launch_arguments.txt"
+
       File.write("/tmp/language.txt", language)
-      File.write("/tmp/snapshot-launch_arguments.txt", launch_arguments.last)
+      File.write(launch_arguments_path, launch_arguments.last)
 
       Fixes::SimulatorZoomFix.patch
 
@@ -162,6 +164,7 @@ module Snapshot
                                               end)
 
       raw_output = File.read(TestCommandGenerator.xcodebuild_log_path)
+      File.delete(launch_arguments_path)
       return Collector.fetch_screenshots(raw_output, language, device_type, launch_arguments.first)
     end
 
